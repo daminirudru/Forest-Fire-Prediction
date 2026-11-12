@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔥 Forest Fire Prediction</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .title {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <!-- 🔥 TITLE -->
+    <h1 class="text-center mb-4">🔥 Forest Fire Prediction System</h1>
+
+
+
+    <div class="alert alert-info text-center">
+    🔴 Live Monitoring System Active
+</div>
+
+
+
+    <div class="row">
+
+        <!-- 🔥 Prediction Card -->
+        <div class="col-md-6">
+            <div class="card p-4 mb-4">
+                <h4 class="title">🔥 Fire Prediction</h4>
+
+                <form action="/predict" method="post">
+                 <input type="number" step="any" name="temp" class="form-control mb-3"
+       placeholder="Temperature (°C)" value="{{ temp if autofill else '' }}" required>
+
+<input type="number" step="any" name="humidity" class="form-control mb-3"
+       placeholder="Humidity (%)" value="{{ humidity if autofill else '' }}" required>  
+                    <input type="number" step="any" name="rainfall" class="form-control mb-3" placeholder="Rainfall (mm)" required>
+
+                    <button class="btn btn-danger w-100">Predict</button>
+                    <button onclick="window.location.href='/'" 
+        class="btn btn-secondary w-100 mt-2">
+    Reset
+</button>
+                </form>
+
+                <!-- ❌ Error -->
+                {% if error %}
+                    <div class="alert alert-danger mt-3">{{ error }}</div>
+                {% endif %}
+
+                <!-- ✅ Result -->
+               {% if result %}
+<div class="alert mt-3 
+   {% if result == "🔥 Fire" %}alert-danger{% else %}alert-success{% endif %}">
+    
+    <h5 class="{% if 'Fire' in result %}text-danger{% else %}text-success{% endif %}">
+    {{ result }}
+</h5>
+    <p><strong>Probability:</strong> {{ prob }}%</p>
+
+    {% if risk %}
+        <p><strong>Risk Level:</strong> {{ risk }}</p>
+    {% endif %}
+
+    {% if result %}
+<a href="/download?res={{result}}&prob={{prob}}&city={{city}}"
+   class="btn btn-secondary mt-2">
+   📥 Download Report
+</a>
+{% endif %}
+
+</div>
+{% endif %}
+<!-- 🔔 ALERT HERE -->
+{% if result == "🔥 Fire" %}
+<div class="alert alert-danger mt-3">
+    ⚠️ High Fire Risk! Take precautions immediately.
+</div>
+{% endif %}
+            </div>
+        </div>
+
+        <!-- 🌐 Weather Card -->
+        <div class="col-md-6">
+            <div class="card p-4 mb-4">
+                <h4 class="title">🌐 Real-Time Weather</h4>
+
+                <form action="/weather" method="post">
+                    <input type="text" name="city" class="form-control mb-3" placeholder="Enter city" required>
+                    <button class="btn btn-primary w-100">Get Weather</button>
+                </form>
+
+                {% if temp %}
+                    <div class="mt-3">
+                        <p>🌡 Temperature: {{ temp }} °C</p>
+                        <p>💧 Humidity: {{ humidity }} %</p>
+                        {% if lat %}
+<p><strong>Coordinates:</strong> {{ lat }}, {{ lon }}</p>
+{% endif %}
+                    </div>
+                {% endif %}
+
+                <!-- 🗺️ Map Button -->
+                {% if show_map %}
+                    <a href="/map" class="btn btn-success mt-3 w-100">🗺️ View Location</a>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+<div class="card p-3 mt-4">
+    <h5>📊 System Status</h5>
+
+    {% if result %}
+        <p><strong>Status:</strong> 
+            {% if 'Fire' in result %}
+                <span class="text-danger">🔥 HIGH RISK</span>
+            {% else %}
+                <span class="text-success">✅ SAFE</span>
+            {% endif %}
+        </p>
+
+        <p><strong>Confidence:</strong> {{ prob }}%</p>
+
+        {% if city %}
+        <p><strong>Location:</strong> {{ city }}</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+
+
+
+
+    <!-- 📊 Graph Section -->
+    {% if graph %}
+    <div class="card p-4 text-center">
+        <h4 class="title">📊 Weather Graph</h4>
+        <img src="{{ url_for('static', filename='graph.png') }}?v={{ graph }}" width="400">
+    </div>
+    {% endif %}
+
+</div>
+
+<div class="text-center mt-4 text-muted">
+    © Forest Fire Prediction System | ML-Based Monitoring
+</div>
+
+</body>
+</html>
